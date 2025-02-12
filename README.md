@@ -33,4 +33,6 @@ DB_PASS="admin"
 
 ## Esquema Visual do LangGraph
 
-![Logo da Minha Empresa](langgraph_image.png)
+![Esquema Visual do LangGraph](langgraph_image.png)
+
+Laranja são Nós criados para executar as verificaçoes e a questão do usuario usando SQLAgent.
