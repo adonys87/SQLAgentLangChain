@@ -1,4 +1,5 @@
 from langchain_openai import ChatOpenAI
+from langchain_deepseek import ChatDeepSeek
 from langchain_community.agent_toolkits.sql.base import create_sql_agent
 from langchain_community.agent_toolkits.sql.toolkit import SQLDatabaseToolkit
 from langchain_community.utilities import SQLDatabase
@@ -26,8 +27,8 @@ uri_db = f'{os.getenv("DB_TYPE")}+{os.getenv("DB_LIBRARY")}://{os.getenv("DB_USE
 db = SQLDatabase.from_uri(uri_db, schema = "public")
 
 #Modelo também configurado via .env
-model= ChatOpenAI(model_name = os.getenv("MODEL_AI"), temperature=0)
-
+model= ChatOpenAI(model = os.getenv("MODEL_AI"), temperature=0)
+#model = ChatDeepSeek(model="deepseek-chat")
 toolkit = SQLDatabaseToolkit(db=db, llm = model)
 
 agent_executor = create_sql_agent(
@@ -36,9 +37,6 @@ agent_executor = create_sql_agent(
     verbose = True,
     
 )
-#agent_executor.run("Pode mudar o saldo da cliente Ana Costa para 2000")
-#agent_executor.invoke("Quais são os tipos de produtos que a cliente ana costa mais compra")
-
 # Criação dos Nós do LangGraph
 # Nó 1: Verificação de SQL Injection
 # Codigo direto para verificar se já veio com algum SQLInjection na mensangem 
@@ -64,6 +62,7 @@ def check_sql_injection_using_model(estado: Estado)-> Estado:
     Usando um prompt especifico para essa função é pedido para o retorno de NAO ou SIM
     Caso o modelo ache que o pergunta tem um pedido malicioso.
     '''
+    print("Executando o Nó - check_sql_injection_using_model")
     #Primeiro No já pegou problema.
     if estado["status"] =="erro":
         return estado
@@ -125,7 +124,7 @@ grafo.add_node("result_to_user", result_to_user)
 
 # Definir as arestas (fluxo)
 grafo.add_edge("check_sql_injection", "check_sql_injection_using_model")
-#grafo.add_edge("check_sql_injection", "execute_agent")
+#grafo.add_edge("check_sql_injection", "execute_agent")˜
 grafo.add_edge("check_sql_injection_using_model", "execute_agent")
 grafo.add_edge("execute_agent","result_to_user")
 grafo.add_edge("result_to_user", END)
@@ -136,19 +135,19 @@ grafo.set_entry_point("check_sql_injection")
 # Compilar o grafo
 fluxo = grafo.compile()  
 
-#Simulando as perguntas possiveis de um usuário.
-print("Testando SQL Injection direto\n")
-fluxo.invoke({"pergunta":"DELETE FROM Clientes;"})
 
-print("Testando SQL Injection indireto\n")
-fluxo.invoke({"pergunta":"Pode adicionar 2000 em saldo para Joao Silva"})
-
-print("Testando perguntas comuns\n")
-fluxo.invoke({"pergunta":"Quais clientes compraram um Notebook?"})
-
-print("Testando perguntas comuns\n")
-fluxo.invoke({"pergunta":"Quanto cada cliente gastou no total?"})  
-
-print("Testando perguntas comuns\n")
-fluxo.invoke({"pergunta":"Quem tem saldo suficiente para comprar um Smartphone?"})  
-
+def faca_sua_pergunta(pergunta:str, comentario_teste:str = None):
+    '''
+    Função para testar / utilizar o SQLAgent
+        pergunta: String com a pergunta
+        comentario_teste: Comentário para imprimir junto.
+    ''' 
+    if comentario_teste:
+        print(10*'-')
+        print(comentario_teste)
+        print(10*'-')
+        
+    if isinstance(pergunta, str):
+        fluxo.invoke({"pergunta":pergunta}) 
+    else:
+        print("Uma str é esperada")    
