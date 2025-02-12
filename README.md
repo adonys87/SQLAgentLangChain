@@ -30,3 +30,7 @@ DB_DATABASE="SQLAgent"
 DB_USER="root"
 DB_PASS="admin"
 ```
+
+## Esquema Visual do LangGraph
+
+![Logo da Minha Empresa](langgraph_image.png)
