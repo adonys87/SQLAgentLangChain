@@ -22,7 +22,7 @@ MODEL_AI ="gpt-3.5-turbo"
 
 # Informações do Banco de dados postgree Postgresql
 # Mantive os valores para demostrar o acesso ao banco de teste na minha máquina
-# Caso fosse subir em um git de desenvvolvimento real apagaria os valores para evitar vazamento de dado sensivel. 
+# Caso fosse subir em um git de desenFvolvimento real apagaria os valores para evitar vazamento de dado sensivel. 
 DB_TYPE="postgresql"
 DB_LIBRARY="psycopg2"
 DB_HOST="localhost"
